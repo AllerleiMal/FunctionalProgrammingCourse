@@ -115,10 +115,13 @@ treeTraverseD f result (Node left_subtree a right_subtree) = treeTraverseD f (f 
 
 -- Обход в ширину treeTraverseW
 -- аргументы - такие же, как и у функции обхода в глубину.
--- treeTraverseW :: (a -> b -> b) -> b -> BinaryTree a -> b
-treeTraverseW f result tree = foldl (f) result (innerTraverse tree [])
+treeTraverseW :: (a -> b -> b) -> b -> BinaryTree a -> b
+treeTraverseW f result tree = foldr (f) result (innerTraverse tree [])
     where
         innerTraverse :: BinaryTree a -> [BinaryTree a] -> [a]
+        innerTraverse Empty [] = []
+        innerTraverse (Leaf a) [] = [a]
         innerTraverse Empty queue = [] ++ innerTraverse (head queue) (tail queue)
         innerTraverse (Leaf a) queue = [a] ++ innerTraverse (head queue) (tail queue)
-        innerTraverse (Node left_subtree a right_subtree) queue = let new_queue = left_subtree : right_subtree : queue in [a] ++ innerTraverse (head queue) (tail queue)
+        innerTraverse (Node left_subtree a right_subtree) queue = let new_queue = queue ++ [left_subtree, right_subtree] in [a] ++ innerTraverse (head new_queue) (tail new_queue)
+
